@@ -3,14 +3,47 @@
   hosts: nodo2
   become: true
   tasks:
-  -name: Ensure all packages are installed
-   apt: pkg={{ item }} state=latest
-   with_items:
-    - apache2
-    - libapache2-mod-php7.0
-    - php7.0-pgsql
-    - php-xml
-    - php7.0-gd
-    - php7.0-mbstring
-    - postgresql-client
-    - php7.0-fpm
+  - name: Ensure all packages are installed
+    apt: pkg={{item}}
+    with_items:
+      - apache2
+      - unzip
+      - libapache2-mod-php7.0
+      - php7.0-pgsql
+      - php-xml
+      - php7.0-gd
+      - php7.0-mbstring
+      - postgresql-client
+      - php7.0-fpm
+
+  - name: Unzip Drupal
+    unarchive:
+      src=conf/drupal-8.6.7.zip
+      dest=/var/www/
+
+  - name: Rename directory
+    shell: mv /var/www/drupal* /var/www/drupal
+
+  - name: Change owner
+    shell: chown -R www-data:www-data /var/www/drupal/ 
+
+  - name: Copy default setting
+    shell: cp /var/www/drupal/sites/default/default.settings.php /var/www/drupal/sites/default/settings.php
+
+  - name: Replace virtualhost
+    copy:
+      src=conf/drupal.conf
+      dest=/etc/apache2/sites-available/
+
+  - name: Enable virtualhost
+    command: a2ensite drupal.conf
+
+  - name: Enable rewrite module
+    command: a2enmod rewrite
+
+    notify:
+      - restart apache2
+
+  handlers:
+    - name: restart apache2
+      service: name=apache2 state=restarted
