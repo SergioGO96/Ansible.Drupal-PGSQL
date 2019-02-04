@@ -1,0 +1,24 @@
+---
+- name: Bind9 installation and configuration
+  hosts: nodo1
+  become: true
+  tasks:
+  - name: Ensure bind9 is installed
+    apt: pkg=bind9
+
+  - name: Configure named.conf.local
+    copy:
+      src=conf/named.conf.local
+      dest=/etc/bind/named.conf.local
+      owner=bind
+      group=bind
+      mode=644
+
+  - name: Configure db.example.com
+    copy:
+      src=conf/db.example.com
+      dest=/var/cache/bind/db.example
+      owner=bind
+      group=bind
+      mode=644
+
