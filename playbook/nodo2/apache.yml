@@ -1,0 +1,16 @@
+---
+- name: Install and Configuration of Apache2,PHP and modules
+  hosts: nodo2
+  become: true
+  tasks:
+  -name: Ensure all packages are installed
+   apt: pkg={{ item }} state=latest
+   with_items:
+    - apache2
+    - libapache2-mod-php7.0
+    - php7.0-pgsql
+    - php-xml
+    - php7.0-gd
+    - php7.0-mbstring
+    - postgresql-client
+    - php7.0-fpm
