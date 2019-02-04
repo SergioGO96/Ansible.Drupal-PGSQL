@@ -1,9 +1,9 @@
 ---
 - name: Postgres installation and configuration
-  hosts: all
+  hosts: nodo1
   become: true
   tasks:
-  - name: Ensure packages are installed
+  - name: Ensure postgres is installed
     apt: pkg=postgresql
 
   - name: Ensure the PostgreSQL service is running
