@@ -11,3 +11,4 @@ El cliente simplemente levantará el escenario y configurará como DNS primario 
 
 El resultado se tiene que proporcionar como un repositorio en github
 
+# Hasta este punto solo hemos llegado a que la url te muestre el instalador de drupal
