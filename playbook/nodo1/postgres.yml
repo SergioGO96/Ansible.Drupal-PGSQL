@@ -1,19 +1,34 @@
 ---
 - name: Postgres installation and configuration
-  hosts: nodo1
+  hosts: all
+  become: true
   tasks:
-        - name: Ensure PostgreSQL is install
-          become: yes
-          apt: name=postgresql
+  - name: Ensure packages are installed
+    apt: pkg=postgresql
 
-        - name: Add a database to Drupal
-          become: yes
-          become_user: postgres
-          vars: ansible_ssh_pipelining=true
-          postgresql_db: name=drupal encoding=UTF-8
+  - name: Ensure the PostgreSQL service is running
+    service: name=postgresql state=started enabled=yes
 
-        - name: Add user Drupal and grant him privilege
-          become: yes
-          become_user: postgres
-          vars: ansible_ssh_pipelining=true
-          postgresql_user: db=drupal name=drupal password=drupal priv="ALL" expires=infinity
+  - name: Create database to Drupal
+    become: yes
+    become_user: postgres
+    vars:
+      ansible_ssh_pipelining: true
+    postgresql_db:
+      name: drupaldb
+      encoding: UTF-8
+
+  - name: Create database user Drupal
+    become: yes
+    become_user: postgres
+    vars:
+      ansible_ssh_pipelining: true
+    postgresql_user:
+      db: drupaldb
+      name: drupal
+      password: drupal
+      priv: "ALL"
+      expires: infinity
+
+    notify:
+      - restart postgresql
